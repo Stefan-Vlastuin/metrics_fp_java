@@ -14,6 +14,8 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSol
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 
+import metrics.visitors.*;
+
 public class Main {
     private static final String PATH = "../examples/src/main/java";
     //private static final String PATH = "javaparser/javaparser-core/src/main/java";

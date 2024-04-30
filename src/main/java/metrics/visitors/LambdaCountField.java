@@ -1,4 +1,4 @@
-package metrics;
+package metrics.visitors;
 
 import java.util.ArrayList;
 import java.util.Optional;

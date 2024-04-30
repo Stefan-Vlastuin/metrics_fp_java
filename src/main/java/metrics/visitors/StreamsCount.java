@@ -1,4 +1,4 @@
-package metrics;
+package metrics.visitors;
 
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
