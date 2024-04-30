@@ -37,8 +37,8 @@ public class Main {
 
         ResultWriter resultWriter = new ResultWriter(RESULT_PATH);
         for (CompilationUnit cu : compilationUnits){
-            Results results = getResults(cu, compilationUnits);
-            resultWriter.writeResult(results);
+            ResultCompilationUnit result = getResults(cu, compilationUnits);
+            resultWriter.writeResult(result);
         }
         resultWriter.close();
     }
@@ -58,7 +58,7 @@ public class Main {
         return result;
     }
 
-    private static Results getResults(CompilationUnit cu, List<CompilationUnit> allUnits){
+    private static ResultCompilationUnit getResults(CompilationUnit cu, List<CompilationUnit> allUnits){
         LexicalPreservingPrinter.setup(cu);
         SLOC SLOC = new SLOC();
         int linesOfCode = SLOC.countSLOC(LexicalPreservingPrinter.print(cu));
@@ -113,6 +113,6 @@ public class Main {
         paradigmScore.visit(cu, null);
         double parScore = paradigmScore.getScore();
 
-        return new Results(cu.getStorage().get().getFileName(), linesOfCode, compl, depth, numberOfChildren, resp, cohesion, coupl, count, lambdaLines, ratio, countField, countSideEffect, nrStreams, parScore); 
+        return new ResultCompilationUnit(cu.getStorage().get().getFileName(), linesOfCode, compl, depth, numberOfChildren, resp, cohesion, coupl, count, lambdaLines, ratio, countField, countSideEffect, nrStreams, parScore); 
     }
 }

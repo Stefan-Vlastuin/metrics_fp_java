@@ -11,13 +11,14 @@ public class ResultWriter {
     public ResultWriter(String path){
         try {
             this.writer = new BufferedWriter(new FileWriter(path));
-            writer.write("File;SLOC;Complexity;DIT;NOC;Response;LackOfCohesion;Coupling;LambdaCount;LambdaLinesCount;LambdaRatio;LambdaCountField;LambdaCountSideEffects;StreamsCount;ParadigmScore\n");
+            writer.write(ResultCompilationUnit.getHeader());
+            writer.newLine();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void writeResult(Results result){
+    public void writeResult(ResultCompilationUnit result){
         try {
             writer.write(result.toString());
             writer.newLine();
