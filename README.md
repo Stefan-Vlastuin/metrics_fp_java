@@ -1,1 +1,1 @@
-# Metrics for Functional and Multi-Paradigm Programming in Java
+# Metrics for Functional Programming in Java
