@@ -5,7 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter;
@@ -17,9 +19,7 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeS
 import metrics.visitors.*;
 
 public class Main {
-    private static final String PATH = "../examples/src/main/java";
-    //private static final String PATH = "javaparser/javaparser-core/src/main/java";
-    //private static final String PATH = "RxJava/src/main/java";
+    private static final String PATH = "../../../../Projects/spring-boot/spring-boot-project/spring-boot/src/main/java";
 
     private static final String RESULT_PATH = "output/output.csv";
     
@@ -31,7 +31,7 @@ public class Main {
         CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver(typeSolver, javaParserTypeSolver);
 
         JavaSymbolSolver symbolSolver = new JavaSymbolSolver(combinedTypeSolver);
-        StaticJavaParser.getParserConfiguration().setSymbolResolver(symbolSolver);
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(symbolSolver).setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_18);
 
         List<CompilationUnit> compilationUnits = getCompilationUnits(new File(PATH));
 
@@ -46,12 +46,12 @@ public class Main {
     private static List<CompilationUnit> getCompilationUnits(File path) throws FileNotFoundException{
         List<CompilationUnit> result = new ArrayList<>();
 
-        for (File f : path.listFiles()){
+        for (File f : Objects.requireNonNull(path.listFiles())){
             if (f.isDirectory()){
                 result.addAll(getCompilationUnits(f));
             } else if (f.getName().endsWith(".java")) {
                 CompilationUnit cu = StaticJavaParser.parse(f);
-                result.add(cu);                    
+                result.add(cu);
             }
         }
 
@@ -113,6 +113,6 @@ public class Main {
         paradigmScore.visit(cu, null);
         double parScore = paradigmScore.getScore();
 
-        return new ResultCompilationUnit(cu.getStorage().get().getFileName(), linesOfCode, compl, depth, numberOfChildren, resp, cohesion, coupl, count, lambdaLines, ratio, countField, countSideEffect, nrStreams, parScore); 
+        return new ResultCompilationUnit(cu.getStorage().orElseThrow().getFileName(), linesOfCode, compl, depth, numberOfChildren, resp, cohesion, coupl, count, lambdaLines, ratio, countField, countSideEffect, nrStreams, parScore);
     }
 }

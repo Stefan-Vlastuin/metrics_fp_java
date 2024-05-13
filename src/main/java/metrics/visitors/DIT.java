@@ -20,7 +20,9 @@ public class DIT extends VoidVisitorAdapter<Void> {
     private int computeDepth (ResolvedReferenceTypeDeclaration resolvedReferenceTypeDeclaration){
         List<ResolvedReferenceType> ancestors = resolvedReferenceTypeDeclaration.getAncestors(true);
         // Compute maximum depth of all ancestors
-        Optional<Integer> depth = ancestors.stream().map(a -> computeDepth(a.getTypeDeclaration().get())).max(Integer::compareTo);
+        Optional<Integer> depth = ancestors.stream()
+                .map(a -> computeDepth(a.getTypeDeclaration().orElseThrow()))
+                .max(Integer::compareTo);
         return depth.map(d -> d + 1).orElse(1);
     }
 

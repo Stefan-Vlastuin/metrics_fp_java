@@ -11,7 +11,7 @@ public class Response extends VoidVisitorAdapter<Void> {
 
     // Storing the ResolvedMethodDeclaration leads to duplicates in the set,
     // so we store the string representation.
-    private Set<String> methods = new HashSet<>();
+    private final Set<String> methods = new HashSet<>();
 
     // TODO: check why some methods cannot be resolved; is it okay to just ignore them?
 

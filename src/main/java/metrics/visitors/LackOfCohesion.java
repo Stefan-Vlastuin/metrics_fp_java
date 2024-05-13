@@ -55,8 +55,7 @@ public class LackOfCohesion extends VoidVisitorAdapter<Void> {
                 ResolvedValueDeclaration decl = nameExpr.resolve();
                 Optional<Node> declNode = decl.toAst();
 
-                if (declNode.isPresent() && declNode.get() instanceof FieldDeclaration){ // Declaration is a declaration of a field variable
-                    FieldDeclaration fieldDeclaration = (FieldDeclaration) declNode.get();
+                if (declNode.isPresent() && declNode.get() instanceof FieldDeclaration fieldDeclaration){ // Declaration is a declaration of a field variable
                     variables.add(fieldDeclaration);
                 }
             } catch (UnsolvedSymbolException e){
@@ -69,7 +68,7 @@ public class LackOfCohesion extends VoidVisitorAdapter<Void> {
 
     public int getLackOfCohesion(){
         int result = nrUnrelatedMethodPairs - nrRelatedMethodPairs;
-        return (result < 0) ? 0 : result;
+        return Math.max(result, 0);
     }
     
 }

@@ -22,18 +22,19 @@ public class LambdaCountSideEffect extends VoidVisitorAdapter<Void> {
         super.visit(lambda, arg);
 
         ArrayList<Node> assignments = new ArrayList<>(); // All assignments done in the lambda
-        Range lambdaRange = lambda.getRange().get();
+
+        Range lambdaRange = lambda.getRange().orElseThrow();
 
         // Go over each assignment expression in the lambda
         lambda.findAll(AssignExpr.class).forEach(assignExpr -> {
             // Get declaration
             // We only look at assignments to field variables of the class itself; assignments with field accesses or array accesses are not counted
             Expression target = assignExpr.getTarget();
-            if (target instanceof NameExpr){
-                ResolvedValueDeclaration decl = ((NameExpr) target).resolve();
+            if (target instanceof NameExpr nameExpr){
+                ResolvedValueDeclaration decl = nameExpr.resolve();
 
                 // If the variable is not declared in the lambda
-                if (!lambdaRange.contains(decl.toAst().get().getRange().get())){
+                if (!lambdaRange.contains(decl.toAst().orElseThrow().getRange().orElseThrow())){
                     assignments.add(assignExpr);
                 }
             }
@@ -49,7 +50,7 @@ public class LambdaCountSideEffect extends VoidVisitorAdapter<Void> {
                     ResolvedValueDeclaration decl = ((NameExpr) expr).resolve();
 
                     // If the variable is not declared in the lambda
-                    if (!lambdaRange.contains(decl.toAst().get().getRange().get())){
+                    if (!lambdaRange.contains(decl.toAst().orElseThrow().getRange().orElseThrow())){
                         assignments.add(unaryExpr);
                     }
                 }

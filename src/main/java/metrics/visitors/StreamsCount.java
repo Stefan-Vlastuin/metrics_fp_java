@@ -11,8 +11,7 @@ public class StreamsCount extends VoidVisitorAdapter<Void> {
     public void visit(VariableDeclarator var, Void arg) {
         super.visit(var, arg);
 
-        if (var.getType() instanceof ClassOrInterfaceType) {
-            ClassOrInterfaceType classOrInterfaceType = (ClassOrInterfaceType) var.getType();
+        if (var.getType() instanceof ClassOrInterfaceType classOrInterfaceType) {
             if (classOrInterfaceType.getNameAsString().equals("Stream")) {
                 count++;
             }

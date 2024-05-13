@@ -10,7 +10,7 @@ public class LambdaLinesCount extends VoidVisitorAdapter<Void> {
     @Override
     public void visit(LambdaExpr lambda, Void arg) {
         super.visit(lambda, arg);
-        Range range = lambda.getRange().get();
+        Range range = lambda.getRange().orElseThrow();
         int lines = range.end.line - range.begin.line + 1;
         count += lines;
     }

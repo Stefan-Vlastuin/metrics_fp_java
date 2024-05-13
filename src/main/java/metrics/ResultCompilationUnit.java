@@ -7,7 +7,7 @@ public record ResultCompilationUnit (String className, int SLOC, int complexity,
     }
 
     @Override
-    public final String toString() {
+    public String toString() {
         return className + ";" + SLOC + ";" + complexity + ";" + DIT + ";" + NOC + ";" + response + ";" + lackOfCohesion + ";" + coupling + ";" + lambdas + ";" + lambdaLines + ";" + lambdaRatio + ";" + lambdaFieldVariables + ";" + lambdaSideEffects + ";" + nrStreams + ";" + paradigmScore;
     }
 }

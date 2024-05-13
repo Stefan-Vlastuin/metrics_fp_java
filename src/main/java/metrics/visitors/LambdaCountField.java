@@ -27,9 +27,8 @@ public class LambdaCountField extends VoidVisitorAdapter<Void> {
                 ResolvedValueDeclaration decl = nameExpr.resolve();
                 Optional<Node> declNode = decl.toAst();
 
-                if (declNode.isPresent() && declNode.get() instanceof FieldDeclaration){ // Declaration is a declaration of a field variable
-                    FieldDeclaration fieldDeclaration = (FieldDeclaration) declNode.get();
-                    
+                if (declNode.isPresent() && declNode.get() instanceof FieldDeclaration fieldDeclaration){ // Declaration is a declaration of a field variable
+
                     // If it is not final, add to list of used field variables
                     if (!fieldDeclaration.isFinal()){
                         fieldVariables.add(nameExpr);

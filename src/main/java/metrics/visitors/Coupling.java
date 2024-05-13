@@ -13,13 +13,11 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 public class Coupling extends VoidVisitorAdapter<Void> {
 
     private String currentClass = "";
-    private Set<String> classes = new HashSet<>();
+    private final Set<String> classes = new HashSet<>();
 
     public Coupling (CompilationUnit cu){
         Optional<ClassOrInterfaceDeclaration> classOrInterfaceDeclaration = cu.findFirst(ClassOrInterfaceDeclaration.class);
-        if (classOrInterfaceDeclaration.isPresent()){
-            this.currentClass = classOrInterfaceDeclaration.get().getNameAsString();
-        }
+        classOrInterfaceDeclaration.ifPresent(decl -> this.currentClass = decl.getNameAsString());
     }
 
     @Override
