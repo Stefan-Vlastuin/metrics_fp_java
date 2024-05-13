@@ -7,7 +7,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
-public class Response extends VoidVisitorAdapter<Void> {
+public class ResponseVisitor extends VoidVisitorAdapter<Void> {
 
     // Storing the ResolvedMethodDeclaration leads to duplicates in the set,
     // so we store the string representation.

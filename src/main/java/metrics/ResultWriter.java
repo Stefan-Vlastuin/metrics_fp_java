@@ -3,14 +3,15 @@ package metrics;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 
 public class ResultWriter {
 
     BufferedWriter writer;
 
-    public ResultWriter(String path) throws IOException {
+    public ResultWriter(String path, List<String> names) throws IOException {
         this.writer = new BufferedWriter(new FileWriter(path));
-        writer.write(ResultCompilationUnit.getHeader());
+        writer.write(String.join(";", names));
         writer.newLine();
     }
 

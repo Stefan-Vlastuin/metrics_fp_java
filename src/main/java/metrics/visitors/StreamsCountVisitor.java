@@ -4,7 +4,7 @@ import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
-public class StreamsCount extends VoidVisitorAdapter<Void> {
+public class StreamsCountVisitor extends VoidVisitorAdapter<Void> {
     private int count = 0;
 
     @Override

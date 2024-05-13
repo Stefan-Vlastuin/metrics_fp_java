@@ -10,13 +10,13 @@ import java.util.Objects;
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 
 import metrics.visitors.*;
+import metrics.metrics.*;
 
 public class Main {
     private static final String RESULT_PATH = "output/output.csv";
@@ -42,10 +42,32 @@ public class Main {
         try {
             List<CompilationUnit> compilationUnits = getCompilationUnits(new File(path));
 
-            resultWriter = new ResultWriter(RESULT_PATH);
+            LambdaVisitor lambdaVisitor = new LambdaVisitor();
+            List<Metric> metrics = List.of(
+                    new LinesOfCodeMetric(),
+                    new ComplexityMetric(),
+                    new DepthMetric(),
+                    new ChildrenMetric(compilationUnits),
+                    new CouplingMetric(),
+                    new ResponseMetric(),
+                    new CohesionMetric(),
+                    new LambdaCountMetric(lambdaVisitor),
+                    new LambdaLinesMetric(lambdaVisitor),
+                    new LambdaScoreMetric(lambdaVisitor),
+                    new LambdaFieldVariableMetric(lambdaVisitor),
+                    new LambdaSideEffectMetric(lambdaVisitor),
+                    new StreamsCountMetric(),
+                    new ParadigmMetric()
+            );
+
+            List<String> names = new ArrayList<>(metrics.stream().map(Metric::getName).toList());
+            names.add(0, "FileName");
+            resultWriter = new ResultWriter(RESULT_PATH, names);
+
             for (CompilationUnit cu : compilationUnits){
                 LOGGER.log("Working on file " + cu.getStorage().orElseThrow().getFileName());
-                ResultCompilationUnit result = getResults(cu, compilationUnits);
+                lambdaVisitor.visit(cu, null); // We do this here, so that it is done only once for all lambda metrics.
+                ResultCompilationUnit result = getResults(cu, metrics);
                 resultWriter.writeResult(result);
             }
         } catch (IOException e){
@@ -73,61 +95,9 @@ public class Main {
         return result;
     }
 
-    private static ResultCompilationUnit getResults(CompilationUnit cu, List<CompilationUnit> allUnits){
-        LexicalPreservingPrinter.setup(cu);
-        SLOC SLOC = new SLOC();
-        int linesOfCode = SLOC.countSLOC(LexicalPreservingPrinter.print(cu));
-
-        Complexity complexity = new Complexity();
-        complexity.visit(cu, null);
-        int compl = complexity.getComplexity();
-
-        DIT DIT = new DIT();
-        DIT.visit(cu, null);
-        int depth = DIT.getDepth();
-
-        NOC NOC = new NOC(allUnits);
-        NOC.visit(cu, null);
-        int numberOfChildren = NOC.getNOC();
-
-        Response response = new Response();
-        response.visit(cu, null);
-        int resp = response.getResponse();
-
-        LackOfCohesion lackOfCohesion = new LackOfCohesion();
-        lackOfCohesion.visit(cu, null);
-        int cohesion = lackOfCohesion.getLackOfCohesion();
-
-        Coupling coupling = new Coupling(cu);
-        coupling.visit(cu, null);
-        int coupl = coupling.getCoupling();
-
-        LambdaCount lambdaCount = new LambdaCount();
-        lambdaCount.visit(cu, null);
-        int count = lambdaCount.getCount();
-
-        LambdaLinesCount lambdaLinesCount = new LambdaLinesCount();
-        lambdaLinesCount.visit(cu, null);
-        int lambdaLines = lambdaLinesCount.getCount();
-
-        double ratio = (double) lambdaLines / linesOfCode;
-
-        LambdaCountField lambdaCountField = new LambdaCountField();
-        lambdaCountField.visit(cu, null);
-        int countField = lambdaCountField.getCount();
-
-        LambdaCountSideEffect lambdaCountSideEffect = new LambdaCountSideEffect();
-        lambdaCountSideEffect.visit(cu, null);
-        int countSideEffect = lambdaCountSideEffect.getCount();
-
-        StreamsCount streamsCount = new StreamsCount();
-        streamsCount.visit(cu, null);
-        int nrStreams = streamsCount.getCount();
-
-        ParadigmScore paradigmScore = new ParadigmScore();
-        paradigmScore.visit(cu, null);
-        double parScore = paradigmScore.getScore();
-
-        return new ResultCompilationUnit(cu.getStorage().orElseThrow().getFileName(), linesOfCode, compl, depth, numberOfChildren, resp, cohesion, coupl, count, lambdaLines, ratio, countField, countSideEffect, nrStreams, parScore);
+    private static ResultCompilationUnit getResults(CompilationUnit cu, List<Metric> metrics){
+        List<Number> numbers = metrics.stream().map(m -> m.getResult(cu)).toList();
+        return new ResultCompilationUnit(cu.getStorage().orElseThrow().getFileName(), numbers);
     }
+
 }

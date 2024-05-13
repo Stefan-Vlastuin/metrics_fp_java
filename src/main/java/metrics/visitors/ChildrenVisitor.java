@@ -7,11 +7,11 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 
-public class NOC extends VoidVisitorAdapter<Void> {
+public class ChildrenVisitor extends VoidVisitorAdapter<Void> {
     private int numberOfChildren = 0;
     private final List<CompilationUnit> allUnits;
 
-    public NOC (List<CompilationUnit> allUnits){
+    public ChildrenVisitor(List<CompilationUnit> allUnits){
         this.allUnits = allUnits;
     }
 

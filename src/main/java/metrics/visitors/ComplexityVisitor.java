@@ -12,7 +12,7 @@ import com.github.javaparser.ast.stmt.TryStmt;
 import com.github.javaparser.ast.stmt.WhileStmt;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
-public class Complexity extends VoidVisitorAdapter<Void> {
+public class ComplexityVisitor extends VoidVisitorAdapter<Void> {
 
     private int complexity = 1;
 

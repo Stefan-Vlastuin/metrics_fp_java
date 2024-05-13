@@ -10,12 +10,12 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
-public class Coupling extends VoidVisitorAdapter<Void> {
+public class CouplingVisitor extends VoidVisitorAdapter<Void> {
 
     private String currentClass = "";
     private final Set<String> classes = new HashSet<>();
 
-    public Coupling (CompilationUnit cu){
+    public CouplingVisitor(CompilationUnit cu){
         Optional<ClassOrInterfaceDeclaration> classOrInterfaceDeclaration = cu.findFirst(ClassOrInterfaceDeclaration.class);
         classOrInterfaceDeclaration.ifPresent(decl -> this.currentClass = decl.getNameAsString());
     }

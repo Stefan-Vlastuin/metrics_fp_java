@@ -1,12 +1,20 @@
-package metrics;
+package metrics.calculators;
+
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 
-public class SLOC {
+public final class LinesOfCodeCalculator {
 
-    public int countSLOC(String code){
+    public static int countSLOC(Node n){
+        LexicalPreservingPrinter.setup(n);
+        return LinesOfCodeCalculator.countSLOC(LexicalPreservingPrinter.print(n));
+    }
+
+    private static int countSLOC(String code){
         BufferedReader reader = new BufferedReader(new StringReader(code));
         int count = 0;
         boolean multiLineComment = false;

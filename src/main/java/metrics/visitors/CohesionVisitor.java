@@ -14,7 +14,7 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
 
-public class LackOfCohesion extends VoidVisitorAdapter<Void> {
+public class CohesionVisitor extends VoidVisitorAdapter<Void> {
 
     private int nrRelatedMethodPairs = 0;
     private int nrUnrelatedMethodPairs = 0;

@@ -11,7 +11,7 @@ import com.github.javaparser.ast.stmt.ForStmt;
 import com.github.javaparser.ast.stmt.WhileStmt;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
-public class ParadigmScore extends VoidVisitorAdapter<Void> {
+public class ParadigmVisitor extends VoidVisitorAdapter<Void> {
 
     private int functionalCount = 0;
     private int imperativeCount = 0;

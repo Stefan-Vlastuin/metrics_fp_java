@@ -8,7 +8,7 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 
-public class DIT extends VoidVisitorAdapter<Void> {
+public class DepthVisitor extends VoidVisitorAdapter<Void> {
     private int depth = 1;
 
     @Override
