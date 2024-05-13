@@ -22,7 +22,7 @@ public class Main {
     private static final String RESULT_PATH = "output/output.csv";
     private final static ProgressLogger LOGGER = new ProgressLogger(true);
     
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         // TODO: each Java file is a compilation unit, so we now compute the metrics per file; do we need to do it per class?
 
         if (args.length != 1) {
@@ -38,15 +38,24 @@ public class Main {
         JavaSymbolSolver symbolSolver = new JavaSymbolSolver(combinedTypeSolver);
         StaticJavaParser.getParserConfiguration().setSymbolResolver(symbolSolver).setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_18);
 
-        List<CompilationUnit> compilationUnits = getCompilationUnits(new File(path));
+        ResultWriter resultWriter = null;
+        try {
+            List<CompilationUnit> compilationUnits = getCompilationUnits(new File(path));
 
-        ResultWriter resultWriter = new ResultWriter(RESULT_PATH);
-        for (CompilationUnit cu : compilationUnits){
-            LOGGER.log("Working on file " + cu.getStorage().orElseThrow().getFileName());
-            ResultCompilationUnit result = getResults(cu, compilationUnits);
-            resultWriter.writeResult(result);
+            resultWriter = new ResultWriter(RESULT_PATH);
+            for (CompilationUnit cu : compilationUnits){
+                LOGGER.log("Working on file " + cu.getStorage().orElseThrow().getFileName());
+                ResultCompilationUnit result = getResults(cu, compilationUnits);
+                resultWriter.writeResult(result);
+            }
+        } catch (IOException e){
+            LOGGER.log(e);
+        } finally {
+            if (resultWriter != null){
+                resultWriter.close();
+            }
+            LOGGER.close();
         }
-        resultWriter.close();
     }
 
     private static List<CompilationUnit> getCompilationUnits(File path) throws FileNotFoundException{
