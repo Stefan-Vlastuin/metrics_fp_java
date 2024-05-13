@@ -19,21 +19,25 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeS
 import metrics.visitors.*;
 
 public class Main {
-    private static final String PATH = "../../../../Projects/spring-boot/spring-boot-project/spring-boot/src/main/java";
-
     private static final String RESULT_PATH = "output/output.csv";
     
     public static void main(String[] args) throws IOException {
         // TODO: each Java file is a compilation unit, so we now compute the metrics per file; do we need to do it per class?
 
+        if (args.length != 1) {
+            System.err.println("Usage: java Main <path>");
+            System.exit(1);
+        }
+        String path = args[0];
+
         ReflectionTypeSolver typeSolver = new ReflectionTypeSolver();
-        JavaParserTypeSolver javaParserTypeSolver = new JavaParserTypeSolver(new File(PATH));
+        JavaParserTypeSolver javaParserTypeSolver = new JavaParserTypeSolver(new File(path));
         CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver(typeSolver, javaParserTypeSolver);
 
         JavaSymbolSolver symbolSolver = new JavaSymbolSolver(combinedTypeSolver);
         StaticJavaParser.getParserConfiguration().setSymbolResolver(symbolSolver).setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_18);
 
-        List<CompilationUnit> compilationUnits = getCompilationUnits(new File(PATH));
+        List<CompilationUnit> compilationUnits = getCompilationUnits(new File(path));
 
         ResultWriter resultWriter = new ResultWriter(RESULT_PATH);
         for (CompilationUnit cu : compilationUnits){
