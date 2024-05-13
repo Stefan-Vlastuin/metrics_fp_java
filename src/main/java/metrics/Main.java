@@ -41,33 +41,17 @@ public class Main {
         ResultWriter resultWriter = null;
         try {
             List<CompilationUnit> compilationUnits = getCompilationUnits(new File(path));
-
             LambdaVisitor lambdaVisitor = new LambdaVisitor();
-            List<Metric> metrics = List.of(
-                    new LinesOfCodeMetric(),
-                    new ComplexityMetric(),
-                    new DepthMetric(),
-                    new ChildrenMetric(compilationUnits),
-                    new CouplingMetric(),
-                    new ResponseMetric(),
-                    new CohesionMetric(),
-                    new LambdaCountMetric(lambdaVisitor),
-                    new LambdaLinesMetric(lambdaVisitor),
-                    new LambdaScoreMetric(lambdaVisitor),
-                    new LambdaFieldVariableMetric(lambdaVisitor),
-                    new LambdaSideEffectMetric(lambdaVisitor),
-                    new StreamsCountMetric(),
-                    new ParadigmMetric()
-            );
 
-            List<String> names = new ArrayList<>(metrics.stream().map(Metric::getName).toList());
+            List<String> names = new ArrayList<>(getMetrics(compilationUnits, lambdaVisitor).stream().map(Metric::getName).toList());
             names.add(0, "FileName");
             resultWriter = new ResultWriter(RESULT_PATH, names);
 
             for (CompilationUnit cu : compilationUnits){
                 LOGGER.log("Working on file " + cu.getStorage().orElseThrow().getFileName());
+                lambdaVisitor = new LambdaVisitor();
                 lambdaVisitor.visit(cu, null); // We do this here, so that it is done only once for all lambda metrics.
-                ResultCompilationUnit result = getResults(cu, metrics);
+                ResultCompilationUnit result = getResults(cu, getMetrics(compilationUnits, lambdaVisitor));
                 resultWriter.writeResult(result);
             }
         } catch (IOException e){
@@ -93,6 +77,25 @@ public class Main {
         }
 
         return result;
+    }
+
+    private static List<Metric> getMetrics(List<CompilationUnit> compilationUnits, LambdaVisitor lambdaVisitor){
+        return List.of(
+                new LinesOfCodeMetric(),
+                new ComplexityMetric(),
+                new DepthMetric(),
+                new ChildrenMetric(compilationUnits),
+                new CouplingMetric(),
+                new ResponseMetric(),
+                new CohesionMetric(),
+                new LambdaCountMetric(lambdaVisitor),
+                new LambdaLinesMetric(lambdaVisitor),
+                new LambdaScoreMetric(lambdaVisitor),
+                new LambdaFieldVariableMetric(lambdaVisitor),
+                new LambdaSideEffectMetric(lambdaVisitor),
+                new StreamsCountMetric(),
+                new ParadigmMetric()
+        );
     }
 
     private static ResultCompilationUnit getResults(CompilationUnit cu, List<Metric> metrics){
