@@ -2,12 +2,15 @@ package metrics.calculators;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter;
+import metrics.ProgressLogger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 
 public final class LinesOfCodeCalculator {
+
+    private static final ProgressLogger logger = ProgressLogger.getInstance();
 
     public static int countSLOC(Node n){
         LexicalPreservingPrinter.setup(n);
@@ -39,6 +42,7 @@ public final class LinesOfCodeCalculator {
                 }
             }
         } catch (IOException e) {
+            logger.log(e, "Exception when counting lines of code");
             return 0;
         }
         return count;

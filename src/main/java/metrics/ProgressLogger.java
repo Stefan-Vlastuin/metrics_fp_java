@@ -11,24 +11,23 @@ public class ProgressLogger {
     private final static String LOG_PATH = "logs/metrics.log";
     private final Logger logger = Logger.getLogger("metrics");
     FileHandler fh;
-    boolean writeToFile;
+    private static ProgressLogger instance;
 
-    public ProgressLogger() {
-        this(false);
+    private ProgressLogger(){
+        try {
+            fh = new FileHandler(LOG_PATH, true);
+            fh.setFormatter(new SimpleFormatter());
+            logger.addHandler(fh);
+        } catch (IOException e) {
+            log(e);
+        }
     }
 
-    public ProgressLogger(boolean writeToFile) {
-        this.writeToFile = writeToFile;
-
-        if (writeToFile) {
-            try {
-                fh = new FileHandler(LOG_PATH, true);
-                fh.setFormatter(new SimpleFormatter());
-                logger.addHandler(fh);
-            } catch (IOException e) {
-                this.writeToFile = false;
-            }
+    public static ProgressLogger getInstance() {
+        if (instance == null) {
+            instance = new ProgressLogger();
         }
+        return instance;
     }
 
     public void log(Level level, String message) {
@@ -43,8 +42,12 @@ public class ProgressLogger {
         logger.log(Level.SEVERE, throwable.getMessage(), throwable);
     }
 
+    public void log(Throwable throwable, String message){
+        logger.log(Level.SEVERE, message + ": " + throwable.getMessage(), throwable);
+    }
+
     public void close(){
-        if (writeToFile && fh != null) {
+        if (fh != null) {
             fh.close();
         }
     }

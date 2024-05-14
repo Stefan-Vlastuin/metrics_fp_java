@@ -9,11 +9,14 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
+import metrics.ProgressLogger;
 
 public class CouplingVisitor extends VoidVisitorAdapter<Void> {
 
     private String currentClass = "";
     private final Set<String> classes = new HashSet<>();
+    private final ProgressLogger logger = ProgressLogger.getInstance();
 
     public CouplingVisitor(CompilationUnit cu){
         Optional<ClassOrInterfaceDeclaration> classOrInterfaceDeclaration = cu.findFirst(ClassOrInterfaceDeclaration.class);
@@ -30,7 +33,7 @@ public class CouplingVisitor extends VoidVisitorAdapter<Void> {
                 classes.add(declClass);
             }
         } catch (Exception e){
-            // Just ignore this method
+            logger.log(e, "Could not resolve method call " + methodCall.getNameAsString() + " at " + methodCall.getRange());
         }
     }
 
@@ -39,12 +42,15 @@ public class CouplingVisitor extends VoidVisitorAdapter<Void> {
         super.visit(nameExpr, arg);
 
         try {
-            String declClass = nameExpr.resolve().asField().declaringType().getClassName();
-            if (!currentClass.equals(declClass)){
-                classes.add(declClass);
+            ResolvedValueDeclaration resolvedValueDeclaration = nameExpr.resolve();
+            if (resolvedValueDeclaration.isField()){
+                String declClass = resolvedValueDeclaration.asField().declaringType().getClassName();
+                if (!currentClass.equals(declClass)){
+                    classes.add(declClass);
+                }
             }
         } catch (Exception e){
-            // Just ignore this expression
+            logger.log(e, "Could not resolve name expression " + nameExpr.getNameAsString() + " at " + nameExpr.getRange());
         }
     }
 

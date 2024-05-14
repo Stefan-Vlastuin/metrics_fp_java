@@ -13,11 +13,13 @@ import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
+import metrics.ProgressLogger;
 
 public class CohesionVisitor extends VoidVisitorAdapter<Void> {
 
     private int nrRelatedMethodPairs = 0;
     private int nrUnrelatedMethodPairs = 0;
+    private final ProgressLogger logger = ProgressLogger.getInstance();
 
     @Override
     public void visit(ClassOrInterfaceDeclaration classOrInterface, Void arg) {
@@ -59,7 +61,7 @@ public class CohesionVisitor extends VoidVisitorAdapter<Void> {
                     variables.add(fieldDeclaration);
                 }
             } catch (UnsolvedSymbolException e){
-                // Apparently not a field variable: we do not have to do anything
+                logger.log(e, "Could not resolve variable " + nameExpr.getNameAsString() + " at " + nameExpr.getRange());
             }
         });
 

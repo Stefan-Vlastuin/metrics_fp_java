@@ -20,7 +20,7 @@ import metrics.metrics.*;
 
 public class Main {
     private static final String RESULT_PATH = "output/output.csv";
-    private final static ProgressLogger LOGGER = new ProgressLogger(true);
+    private final static ProgressLogger logger = ProgressLogger.getInstance();
     
     public static void main(String[] args) {
         // TODO: each Java file is a compilation unit, so we now compute the metrics per file; do we need to do it per class?
@@ -48,19 +48,19 @@ public class Main {
             resultWriter = new ResultWriter(RESULT_PATH, names);
 
             for (CompilationUnit cu : compilationUnits){
-                LOGGER.log("Working on file " + cu.getStorage().orElseThrow().getFileName());
+                logger.log("Working on file " + cu.getStorage().orElseThrow().getFileName());
                 lambdaVisitor = new LambdaVisitor();
                 lambdaVisitor.visit(cu, null); // We do this here, so that it is done only once for all lambda metrics.
                 ResultCompilationUnit result = getResults(cu, getMetrics(compilationUnits, lambdaVisitor));
                 resultWriter.writeResult(result);
             }
         } catch (IOException e){
-            LOGGER.log(e);
+            logger.log(e);
         } finally {
             if (resultWriter != null){
                 resultWriter.close();
             }
-            LOGGER.close();
+            logger.close();
         }
     }
 
@@ -85,9 +85,9 @@ public class Main {
                 new ComplexityMetric(),
                 new DepthMetric(),
                 new ChildrenMetric(compilationUnits),
-                new CouplingMetric(),
                 new ResponseMetric(),
                 new CohesionMetric(),
+                new CouplingMetric(),
                 new LambdaCountMetric(lambdaVisitor),
                 new LambdaLinesMetric(lambdaVisitor),
                 new LambdaScoreMetric(lambdaVisitor),

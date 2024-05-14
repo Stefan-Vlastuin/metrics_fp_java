@@ -6,14 +6,14 @@ import java.util.Set;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import metrics.ProgressLogger;
 
 public class ResponseVisitor extends VoidVisitorAdapter<Void> {
 
     // Storing the ResolvedMethodDeclaration leads to duplicates in the set,
     // so we store the string representation.
     private final Set<String> methods = new HashSet<>();
-
-    // TODO: check why some methods cannot be resolved; is it okay to just ignore them?
+    private final ProgressLogger logger = ProgressLogger.getInstance();
 
     @Override
     public void visit(MethodDeclaration method, Void arg) {
@@ -22,7 +22,7 @@ public class ResponseVisitor extends VoidVisitorAdapter<Void> {
         try {
             methods.add(method.resolve().toString());
         } catch (Exception e){
-            // Just ignore this method
+            logger.log(e, "Could not resolve method declaration " + method.getNameAsString() + " at " + method.getRange());
         }
     }
 
@@ -33,7 +33,7 @@ public class ResponseVisitor extends VoidVisitorAdapter<Void> {
         try {
             methods.add(methodCall.resolve().toString());
         } catch (Exception e){
-            // Just ignore this method
+            logger.log(e, "Could not resolve method call " + methodCall.getNameAsString() + " at " + methodCall.getRange());
         }
     }
 

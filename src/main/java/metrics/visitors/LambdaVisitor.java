@@ -7,6 +7,7 @@ import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
+import metrics.ProgressLogger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +18,7 @@ public class LambdaVisitor extends VoidVisitorAdapter<Void> {
     private int linesCount = 0;
     private int fieldVariableCount = 0;
     private int sideEffectCount = 0;
+    private final ProgressLogger logger = ProgressLogger.getInstance();
 
     @Override
     public void visit(LambdaExpr lambda, Void arg) {
@@ -54,7 +56,7 @@ public class LambdaVisitor extends VoidVisitorAdapter<Void> {
                     }
                 }
             } catch (UnsolvedSymbolException e){
-                // Apparently not a field variable: we do not have to do anything
+                logger.log(e, "Could not resolve variable " + nameExpr.getNameAsString() + " at " + nameExpr.getRange());
             }
         });
 
