@@ -2,15 +2,10 @@ package metrics.visitors;
 
 import java.util.*;
 
-import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import com.github.javaparser.resolution.UnsolvedSymbolException;
-import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
-import metrics.ProgressLogger;
 
 public class CohesionVisitor extends VoidVisitorAdapter<Void> {
 
@@ -54,30 +49,4 @@ public class CohesionVisitor extends VoidVisitorAdapter<Void> {
         return Math.max(result, 0);
     }
     
-}
-
-class FieldVariableVisitor extends VoidVisitorAdapter<Void> {
-    private final ProgressLogger logger = ProgressLogger.getInstance();
-    private final Set<FieldDeclaration> fieldVariables = new HashSet<>();
-
-    @Override
-    public void visit(NameExpr nameExpr, Void arg) {
-        super.visit(nameExpr, arg);
-
-        try {
-            ResolvedValueDeclaration decl = nameExpr.resolve();
-            Optional<Node> declNode = decl.toAst();
-
-            if (declNode.isPresent() && declNode.get() instanceof FieldDeclaration fieldDeclaration){
-                fieldVariables.add(fieldDeclaration);
-            }
-        } catch (UnsolvedSymbolException e){
-            logger.log(e, "Could not resolve variable " + nameExpr.getNameAsString() + " at " + nameExpr.getRange());
-        }
-
-    }
-
-    public Set<FieldDeclaration> getFieldVariables() {
-        return fieldVariables;
-    }
 }
