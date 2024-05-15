@@ -1,9 +1,6 @@
 package metrics.visitors;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -19,7 +16,6 @@ public class CohesionVisitor extends VoidVisitorAdapter<Void> {
 
     private int nrRelatedMethodPairs = 0;
     private int nrUnrelatedMethodPairs = 0;
-    private final ProgressLogger logger = ProgressLogger.getInstance();
 
     @Override
     public void visit(ClassOrInterfaceDeclaration classOrInterface, Void arg) {
@@ -48,24 +44,9 @@ public class CohesionVisitor extends VoidVisitorAdapter<Void> {
 
     // Gets all used instance variables of a method
     private Set<FieldDeclaration> getUsedInstanceVariables(MethodDeclaration m){
-        Set<FieldDeclaration> variables = new HashSet<>();
-
-        // Go over each used variable
-        m.findAll(NameExpr.class).forEach(nameExpr -> {
-            try {
-                // Get declaration
-                ResolvedValueDeclaration decl = nameExpr.resolve();
-                Optional<Node> declNode = decl.toAst();
-
-                if (declNode.isPresent() && declNode.get() instanceof FieldDeclaration fieldDeclaration){ // Declaration is a declaration of a field variable
-                    variables.add(fieldDeclaration);
-                }
-            } catch (UnsolvedSymbolException e){
-                logger.log(e, "Could not resolve variable " + nameExpr.getNameAsString() + " at " + nameExpr.getRange());
-            }
-        });
-
-        return variables;
+        FieldVariableVisitor v = new FieldVariableVisitor();
+        v.visit(m, null);
+        return v.getFieldVariables();
     }
 
     public int getLackOfCohesion(){
@@ -73,4 +54,30 @@ public class CohesionVisitor extends VoidVisitorAdapter<Void> {
         return Math.max(result, 0);
     }
     
+}
+
+class FieldVariableVisitor extends VoidVisitorAdapter<Void> {
+    private final ProgressLogger logger = ProgressLogger.getInstance();
+    private final Set<FieldDeclaration> fieldVariables = new HashSet<>();
+
+    @Override
+    public void visit(NameExpr nameExpr, Void arg) {
+        super.visit(nameExpr, arg);
+
+        try {
+            ResolvedValueDeclaration decl = nameExpr.resolve();
+            Optional<Node> declNode = decl.toAst();
+
+            if (declNode.isPresent() && declNode.get() instanceof FieldDeclaration fieldDeclaration){
+                fieldVariables.add(fieldDeclaration);
+            }
+        } catch (UnsolvedSymbolException e){
+            logger.log(e, "Could not resolve variable " + nameExpr.getNameAsString() + " at " + nameExpr.getRange());
+        }
+
+    }
+
+    public Set<FieldDeclaration> getFieldVariables() {
+        return fieldVariables;
+    }
 }
