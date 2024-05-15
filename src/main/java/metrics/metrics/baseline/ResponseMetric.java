@@ -1,9 +1,10 @@
-package metrics.metrics;
+package metrics.metrics.baseline;
 
 import com.github.javaparser.ast.CompilationUnit;
+import metrics.metrics.Metric;
 import metrics.visitors.ResponseVisitor;
 
-public class ResponseMetric implements Metric{
+public class ResponseMetric implements Metric {
 
     @Override
     public Number getResult(CompilationUnit cu) {

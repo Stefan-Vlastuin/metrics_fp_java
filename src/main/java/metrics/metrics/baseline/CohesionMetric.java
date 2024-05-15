@@ -1,5 +1,6 @@
-package metrics.metrics;
+package metrics.metrics.baseline;
 
+import metrics.metrics.Metric;
 import metrics.visitors.CohesionVisitor;
 import com.github.javaparser.ast.CompilationUnit;
 

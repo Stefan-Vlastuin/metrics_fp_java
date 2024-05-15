@@ -1,6 +1,7 @@
-package metrics.metrics;
+package metrics.metrics.baseline;
 
 import com.github.javaparser.ast.CompilationUnit;
+import metrics.metrics.Metric;
 import metrics.visitors.CouplingVisitor;
 
 public class CouplingMetric implements Metric {

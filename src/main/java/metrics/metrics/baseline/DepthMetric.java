@@ -1,9 +1,10 @@
-package metrics.metrics;
+package metrics.metrics.baseline;
 
+import metrics.metrics.Metric;
 import metrics.visitors.DepthVisitor;
 import com.github.javaparser.ast.CompilationUnit;
 
-public class DepthMetric implements Metric{
+public class DepthMetric implements Metric {
     @Override
     public Number getResult(CompilationUnit cu) {
         DepthVisitor depthVisitor = new DepthVisitor();

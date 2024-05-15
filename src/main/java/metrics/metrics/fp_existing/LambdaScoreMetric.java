@@ -1,10 +1,11 @@
-package metrics.metrics;
+package metrics.metrics.fp_existing;
 
 import com.github.javaparser.ast.CompilationUnit;
 import metrics.calculators.LinesOfCodeCalculator;
+import metrics.metrics.Metric;
 import metrics.visitors.LambdaVisitor;
 
-public class LambdaScoreMetric implements Metric{
+public class LambdaScoreMetric implements Metric {
     LambdaVisitor visitor;
 
     public LambdaScoreMetric(LambdaVisitor visitor){

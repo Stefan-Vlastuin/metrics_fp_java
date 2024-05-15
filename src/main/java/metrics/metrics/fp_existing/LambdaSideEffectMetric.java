@@ -1,22 +1,24 @@
-package metrics.metrics;
+package metrics.metrics.fp_existing;
 
 import com.github.javaparser.ast.CompilationUnit;
+import metrics.metrics.Metric;
 import metrics.visitors.LambdaVisitor;
 
-public class LambdaCountMetric implements Metric{
+public class LambdaSideEffectMetric implements Metric {
     LambdaVisitor visitor;
 
-    public LambdaCountMetric(LambdaVisitor visitor){
+    public LambdaSideEffectMetric(LambdaVisitor visitor){
         this.visitor = visitor;
     }
 
     @Override
     public Number getResult(CompilationUnit cu) {
-        return visitor.getLambdaCount();
+        return visitor.getLambdaCountSideEffect();
     }
 
     @Override
     public String getName() {
-        return "LambdaCount";
+        return "LambdaSideEffect";
     }
 }
+
