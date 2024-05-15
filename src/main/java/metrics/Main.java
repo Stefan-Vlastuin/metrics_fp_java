@@ -17,6 +17,7 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeS
 
 import metrics.metrics.baseline.*;
 import metrics.metrics.fp_existing.*;
+import metrics.metrics.fp_new.*;
 import metrics.visitors.*;
 import metrics.metrics.*;
 
@@ -94,7 +95,9 @@ public class Main {
                 new LambdaLinesMetric(lambdaVisitor),
                 new LambdaScoreMetric(lambdaVisitor),
                 new LambdaFieldVariableMetric(lambdaVisitor),
+                new HigherOrderFieldVariableMetric(lambdaVisitor),
                 new LambdaSideEffectMetric(lambdaVisitor),
+                new HigherOrderSideEffectMetric(lambdaVisitor),
                 new StreamsCountMetric(),
                 new ParadigmMetric()
         );
