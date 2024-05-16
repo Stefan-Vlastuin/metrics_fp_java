@@ -45,8 +45,9 @@ public class Main {
         try {
             List<CompilationUnit> compilationUnits = getCompilationUnits(new File(path));
             LambdaVisitor lambdaVisitor = new LambdaVisitor();
+            StreamVisitor streamVisitor = new StreamVisitor();
 
-            List<String> names = new ArrayList<>(getMetrics(compilationUnits, lambdaVisitor).stream().map(Metric::getName).toList());
+            List<String> names = new ArrayList<>(getMetrics(compilationUnits, lambdaVisitor, streamVisitor).stream().map(Metric::getName).toList());
             names.add(0, "FileName");
             resultWriter = new ResultWriter(RESULT_PATH, names);
 
@@ -54,7 +55,9 @@ public class Main {
                 logger.log("Working on file " + cu.getStorage().orElseThrow().getFileName());
                 lambdaVisitor = new LambdaVisitor();
                 lambdaVisitor.visit(cu, null); // We do this here, so that it is done only once for all lambda metrics.
-                ResultCompilationUnit result = getResults(cu, getMetrics(compilationUnits, lambdaVisitor));
+                streamVisitor = new StreamVisitor();
+                streamVisitor.visit(cu, null);
+                ResultCompilationUnit result = getResults(cu, getMetrics(compilationUnits, lambdaVisitor, streamVisitor));
                 resultWriter.writeResult(result);
             }
         } catch (IOException e){
@@ -82,7 +85,7 @@ public class Main {
         return result;
     }
 
-    private static List<Metric> getMetrics(List<CompilationUnit> compilationUnits, LambdaVisitor lambdaVisitor){
+    private static List<Metric> getMetrics(List<CompilationUnit> compilationUnits, LambdaVisitor lambdaVisitor, StreamVisitor streamVisitor){
         return List.of(
                 new LinesOfCodeMetric(),
                 new ComplexityMetric(),
@@ -98,7 +101,10 @@ public class Main {
                 new HigherOrderFieldVariableMetric(lambdaVisitor),
                 new LambdaSideEffectMetric(lambdaVisitor),
                 new HigherOrderSideEffectMetric(lambdaVisitor),
-                new StreamsCountMetric(),
+                new StreamsCountMetric(streamVisitor),
+                new TotalStreamOperationsMetric(streamVisitor),
+                new AverageStreamOperationsMetric(streamVisitor),
+                new MaxStreamOperationsMetric(streamVisitor),
                 new ParadigmMetric()
         );
     }

@@ -13,6 +13,7 @@ import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.github.javaparser.resolution.types.ResolvedType;
+import metrics.calculators.StreamOperationsCalculator;
 
 public class ParadigmVisitor extends VoidVisitorAdapter<Void> {
 
@@ -53,12 +54,7 @@ public class ParadigmVisitor extends VoidVisitorAdapter<Void> {
     public void visit(MethodCallExpr n, Void arg) {
         super.visit(n, arg);
 
-        List<String> functionalCalls =
-                Arrays.asList("allMatch", "anyMatch", "count", "filter", "findAny", "findFirst",
-                        "flatMap", "flatMapToDouble", "flatMapToInt", "flatMapToLong", "map",
-                        "mapToDouble", "mapToInt", "mapToLong", "noneMatch", "reduce");
-
-        if (functionalCalls.contains(n.getNameAsString())){
+        if (StreamOperationsCalculator.isStreamOperation(n)){
             functionalCount++;
         }
     }
