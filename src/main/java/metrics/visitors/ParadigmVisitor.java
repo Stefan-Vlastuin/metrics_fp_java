@@ -103,6 +103,13 @@ public class ParadigmVisitor extends VoidVisitorAdapter<Void> {
         }
         return (double) (functionalCount - imperativeCount) / (functionalCount + imperativeCount);
     }
+
+    public double getAlternativeScore(){
+        if (functionalCount + imperativeCount == 0){
+            return 0.0;
+        }
+        return (double) functionalCount / (functionalCount + imperativeCount);
+    }
     
 }
 

@@ -106,6 +106,7 @@ public class Main {
                 new AverageStreamOperationsMetric(streamVisitor),
                 new MaxStreamOperationsMetric(streamVisitor),
                 new ParadigmMetric(),
+                new ParadigmAlternativeMetric(),
                 new PatternMatchingMetric(),
                 new InstanceofMetric()
         );
