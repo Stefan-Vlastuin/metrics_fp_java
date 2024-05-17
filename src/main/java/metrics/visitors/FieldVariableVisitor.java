@@ -11,6 +11,7 @@ import metrics.ProgressLogger;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class FieldVariableVisitor extends VoidVisitorAdapter<Void> {
     private final ProgressLogger logger = ProgressLogger.getInstance();
@@ -35,5 +36,13 @@ public class FieldVariableVisitor extends VoidVisitorAdapter<Void> {
 
     public Set<FieldDeclaration> getFieldVariables() {
         return fieldVariables;
+    }
+
+    public Set<FieldDeclaration> getNonFinalFieldVariables(){
+        return fieldVariables.stream().filter(v -> !v.isFinal()).collect(Collectors.toSet());
+    }
+
+    public boolean usesNonFinalFieldVariable(){
+        return !getNonFinalFieldVariables().isEmpty();
     }
 }

@@ -45,6 +45,4 @@ public class SideEffectVisitor extends VoidVisitorAdapter<Range> {
         return hasSideEffect;
     }
 
-
-
 }

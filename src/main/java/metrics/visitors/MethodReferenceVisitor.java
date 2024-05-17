@@ -37,7 +37,7 @@ public class MethodReferenceVisitor extends VoidVisitorAdapter<Void> {
     private boolean usesFieldVariable(Node n){
         FieldVariableVisitor v = new FieldVariableVisitor();
         n.accept(v, null);
-        return v.getFieldVariables().stream().anyMatch(var -> !var.isFinal());
+        return v.usesNonFinalFieldVariable();
     }
 
     private boolean hasSideEffect(Node n){

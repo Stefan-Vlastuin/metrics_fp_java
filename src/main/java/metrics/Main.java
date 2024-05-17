@@ -46,8 +46,9 @@ public class Main {
             List<CompilationUnit> compilationUnits = getCompilationUnits(new File(path));
             LambdaVisitor lambdaVisitor = new LambdaVisitor();
             StreamVisitor streamVisitor = new StreamVisitor();
+            MethodPurityVisitor methodPurityVisitor = new MethodPurityVisitor();
 
-            List<String> names = new ArrayList<>(getMetrics(compilationUnits, lambdaVisitor, streamVisitor).stream().map(Metric::getName).toList());
+            List<String> names = new ArrayList<>(getMetrics(compilationUnits, lambdaVisitor, streamVisitor, methodPurityVisitor).stream().map(Metric::getName).toList());
             names.add(0, "FileName");
             resultWriter = new ResultWriter(RESULT_PATH, names);
 
@@ -57,7 +58,9 @@ public class Main {
                 lambdaVisitor.visit(cu, null); // We do this here, so that it is done only once for all lambda metrics.
                 streamVisitor = new StreamVisitor();
                 streamVisitor.visit(cu, null);
-                ResultCompilationUnit result = getResults(cu, getMetrics(compilationUnits, lambdaVisitor, streamVisitor));
+                methodPurityVisitor = new MethodPurityVisitor();
+                methodPurityVisitor.visit(cu, null);
+                ResultCompilationUnit result = getResults(cu, getMetrics(compilationUnits, lambdaVisitor, streamVisitor, methodPurityVisitor));
                 resultWriter.writeResult(result);
             }
         } catch (IOException e){
@@ -85,7 +88,7 @@ public class Main {
         return result;
     }
 
-    private static List<Metric> getMetrics(List<CompilationUnit> compilationUnits, LambdaVisitor lambdaVisitor, StreamVisitor streamVisitor){
+    private static List<Metric> getMetrics(List<CompilationUnit> compilationUnits, LambdaVisitor lambdaVisitor, StreamVisitor streamVisitor, MethodPurityVisitor methodPurityVisitor){
         return List.of(
                 new LinesOfCodeMetric(),
                 new ComplexityMetric(),
@@ -96,7 +99,10 @@ public class Main {
                 new CouplingMetric(),
                 new LambdaCountMetric(lambdaVisitor),
                 new LambdaLinesMetric(lambdaVisitor),
+                new AverageLambdaLinesMetric(lambdaVisitor),
+                new MaxLambdaLinesMetric(lambdaVisitor),
                 new LambdaScoreMetric(lambdaVisitor),
+                new LambdaComplexityMetric(lambdaVisitor),
                 new LambdaFieldVariableMetric(lambdaVisitor),
                 new HigherOrderFieldVariableMetric(lambdaVisitor),
                 new LambdaSideEffectMetric(lambdaVisitor),
@@ -108,7 +114,15 @@ public class Main {
                 new ParadigmMetric(),
                 new ParadigmAlternativeMetric(),
                 new PatternMatchingMetric(),
-                new InstanceofMetric()
+                new InstanceofMetric(),
+                new MethodSideEffectMetric(methodPurityVisitor),
+                new MethodFieldVariableMetric(methodPurityVisitor),
+                new MethodImpureMetric(methodPurityVisitor),
+                new MethodRatioSideEffectMetric(methodPurityVisitor),
+                new MethodRatioFieldVariableMetric(methodPurityVisitor),
+                new MethodRatioImpureMetric(methodPurityVisitor),
+                new FieldVariableNonFinalMetric(),
+                new FieldVariableRatioNonFinalMetric()
         );
     }
 
