@@ -12,12 +12,14 @@ import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.github.javaparser.resolution.types.ResolvedType;
+import metrics.ProgressLogger;
 import metrics.calculators.StreamOperationsCalculator;
 
 public class ParadigmVisitor extends VoidVisitorAdapter<Void> {
 
     private int functionalCount = 0;
     private int imperativeCount = 0;
+    private final ProgressLogger logger = ProgressLogger.getInstance();
 
     @Override
     public void visit(WhileStmt n, Void arg) {
@@ -83,14 +85,18 @@ public class ParadigmVisitor extends VoidVisitorAdapter<Void> {
         types.addAll(method.getParameters().stream().map(Parameter::getType).toList());
 
         for (Type t : types){
-            ResolvedType resolvedType = t.resolve();
-            if (resolvedType.isReferenceType()){
-                ResolvedReferenceType referenceType = resolvedType.asReferenceType();
-                if (referenceType.getTypeDeclaration().isPresent()){
-                    if (referenceType.getTypeDeclaration().get().isFunctionalInterface()){
-                        return true;
+            try {
+                ResolvedType resolvedType = t.resolve();
+                if (resolvedType.isReferenceType()){
+                    ResolvedReferenceType referenceType = resolvedType.asReferenceType();
+                    if (referenceType.getTypeDeclaration().isPresent()){
+                        if (referenceType.getTypeDeclaration().get().isFunctionalInterface()){
+                            return true;
+                        }
                     }
                 }
+            } catch (Exception e){
+                logger.log(e, "Could not resolve type " + t.toString() + " at " + t.getRange());
             }
         }
 
@@ -115,6 +121,7 @@ public class ParadigmVisitor extends VoidVisitorAdapter<Void> {
 
 class RecursionVisitor extends VoidVisitorAdapter<MethodDeclaration> {
     private boolean isRecursive = false;
+    private final ProgressLogger logger = ProgressLogger.getInstance();
 
     @Override
     public void visit(MethodCallExpr methodCall, MethodDeclaration methodDeclaration) {
@@ -124,8 +131,12 @@ class RecursionVisitor extends VoidVisitorAdapter<MethodDeclaration> {
         int nrParameters = methodDeclaration.getParameters().size();
 
         if (methodCall.getNameAsString().equals(name) && methodCall.getArguments().size() == nrParameters){
-            if (methodCall.resolve().toDescriptor().equals(methodDeclaration.resolve().toDescriptor())){
-                isRecursive = true;
+            try {
+                if (methodCall.resolve().toDescriptor().equals(methodDeclaration.resolve().toDescriptor())){
+                    isRecursive = true;
+                }
+            } catch (Exception e){
+                logger.log(e, "Could not resolve method call " + methodCall.getNameAsString() + " at " + methodCall.getRange());
             }
         }
 

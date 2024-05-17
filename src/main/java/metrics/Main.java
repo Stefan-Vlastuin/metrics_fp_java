@@ -34,12 +34,13 @@ public class Main {
         }
         String path = args[0];
 
-        ReflectionTypeSolver typeSolver = new ReflectionTypeSolver();
-        JavaParserTypeSolver javaParserTypeSolver = new JavaParserTypeSolver(new File(path));
-        CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver(typeSolver, javaParserTypeSolver);
 
-        JavaSymbolSolver symbolSolver = new JavaSymbolSolver(combinedTypeSolver);
-        StaticJavaParser.getParserConfiguration().setSymbolResolver(symbolSolver).setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_18);
+        CombinedTypeSolver typeSolver = new CombinedTypeSolver();
+        ParserConfiguration parserConfiguration = new ParserConfiguration()
+                .setSymbolResolver(new JavaSymbolSolver(typeSolver)).setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_18);
+        typeSolver.add(new JavaParserTypeSolver(new File(path), parserConfiguration));
+        typeSolver.add(new ReflectionTypeSolver(false));
+        StaticJavaParser.setConfiguration(parserConfiguration);
 
         ResultWriter resultWriter = null;
         try {

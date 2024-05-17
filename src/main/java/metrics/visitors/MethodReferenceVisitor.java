@@ -3,7 +3,6 @@ package metrics.visitors;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.MethodReferenceExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import metrics.ProgressLogger;
 
@@ -21,7 +20,6 @@ public class MethodReferenceVisitor extends VoidVisitorAdapter<Void> {
             if (resolvedMethodDeclaration.toAst().isPresent()){
                 Node n = resolvedMethodDeclaration.toAst().get();
                 if (usesFieldVariable(n)){
-                    logger.log("HOF using field variable: " + methodReference.getIdentifier());
                     fieldVariableCount++;
                 }
 
@@ -29,7 +27,7 @@ public class MethodReferenceVisitor extends VoidVisitorAdapter<Void> {
                     sideEffectCount++;
                 }
             }
-        } catch (UnsolvedSymbolException e){
+        } catch (Exception e){
             logger.log(e, "Could not resolve method reference " + methodReference.getIdentifier() + " at " + methodReference.getRange());
         }
     }
