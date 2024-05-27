@@ -15,7 +15,7 @@ public class ProgressLogger {
 
     private ProgressLogger(){
         try {
-            fh = new FileHandler(LOG_PATH, true);
+            fh = new FileHandler(LOG_PATH, false);
             fh.setFormatter(new SimpleFormatter());
             logger.addHandler(fh);
         } catch (IOException e) {
