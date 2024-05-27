@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,12 +29,18 @@ public class Main {
     public static void main(String[] args) {
         // TODO: each Java file is a compilation unit, so we now compute the metrics per file; do we need to do it per class?
 
-        if (args.length != 1) {
-            System.err.println("Usage: java Main <path>");
+        String path = "";
+        List<String> filesToIgnore = new ArrayList<>();
+        if (args.length == 1) {
+            path = args[0];
+        } else if (args.length == 2){
+            path = args[0];
+            String ignore = args[1];
+            filesToIgnore = Arrays.asList(ignore.split(","));
+        } else {
+            System.err.println("Usage: java Main <path> <ignore>");
             System.exit(1);
         }
-        String path = args[0];
-
 
         CombinedTypeSolver typeSolver = new CombinedTypeSolver();
         ParserConfiguration parserConfiguration = new ParserConfiguration()
@@ -54,15 +61,18 @@ public class Main {
             resultWriter = new ResultWriter(RESULT_PATH, names);
 
             for (CompilationUnit cu : compilationUnits){
-                logger.log("Working on file " + cu.getStorage().orElseThrow().getFileName());
-                lambdaVisitor = new LambdaVisitor();
-                lambdaVisitor.visit(cu, null); // We do this here, so that it is done only once for all lambda metrics.
-                streamVisitor = new StreamVisitor();
-                streamVisitor.visit(cu, null);
-                methodPurityVisitor = new MethodPurityVisitor();
-                methodPurityVisitor.visit(cu, null);
-                ResultCompilationUnit result = getResults(cu, getMetrics(compilationUnits, lambdaVisitor, streamVisitor, methodPurityVisitor));
-                resultWriter.writeResult(result);
+                String filename = cu.getStorage().orElseThrow().getFileName();
+                if(!filesToIgnore.contains(filename)){
+                    logger.log("Working on file " + cu.getStorage().orElseThrow().getFileName());
+                    lambdaVisitor = new LambdaVisitor();
+                    lambdaVisitor.visit(cu, null); // We do this here, so that it is done only once for all lambda metrics.
+                    streamVisitor = new StreamVisitor();
+                    streamVisitor.visit(cu, null);
+                    methodPurityVisitor = new MethodPurityVisitor();
+                    methodPurityVisitor.visit(cu, null);
+                    ResultCompilationUnit result = getResults(cu, getMetrics(compilationUnits, lambdaVisitor, streamVisitor, methodPurityVisitor));
+                    resultWriter.writeResult(result);
+                }
             }
         } catch (IOException e){
             logger.log(e);
