@@ -37,8 +37,6 @@ public class Main {
     private final static ProgressLogger logger = ProgressLogger.getInstance();
     
     public static void main(String[] args) {
-        // TODO: each Java file is a compilation unit, so we now compute the metrics per file; do we need to do it per class?
-
         String path = "";
         String basePath = "";
         List<String> filesToIgnore = new ArrayList<>();
