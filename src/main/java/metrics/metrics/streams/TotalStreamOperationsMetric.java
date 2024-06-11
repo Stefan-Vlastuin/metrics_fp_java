@@ -1,23 +1,23 @@
-package metrics.metrics.fp_new;
+package metrics.metrics.streams;
 
 import com.github.javaparser.ast.CompilationUnit;
 import metrics.metrics.Metric;
 import metrics.visitors.StreamVisitor;
 
-public class MaxStreamOperationsMetric implements Metric {
+public class TotalStreamOperationsMetric implements Metric {
     StreamVisitor streamVisitor;
 
-    public MaxStreamOperationsMetric(StreamVisitor streamVisitor){
+    public TotalStreamOperationsMetric(StreamVisitor streamVisitor){
         this.streamVisitor = streamVisitor;
     }
 
     @Override
     public Number getResult(CompilationUnit cu) {
-        return streamVisitor.getMaxStreamOperations();
+        return streamVisitor.getTotalStreamOperations();
     }
 
     @Override
     public String getName() {
-        return "MaxStreamOperations";
+        return "TotalStreamOperations";
     }
 }

@@ -3,8 +3,8 @@ package new_metrics;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import metrics.metrics.baseline.Setup;
-import metrics.metrics.fp_existing.ParadigmAlternativeMetric;
-import metrics.metrics.fp_existing.ParadigmMetric;
+import metrics.metrics.paradigm.ParadigmAlternativeMetric;
+import metrics.metrics.paradigm.ParadigmMetric;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

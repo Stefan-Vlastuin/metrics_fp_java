@@ -1,24 +1,23 @@
-package metrics.metrics.fp_existing;
+package metrics.metrics.lambdas;
 
 import com.github.javaparser.ast.CompilationUnit;
 import metrics.metrics.Metric;
 import metrics.visitors.LambdaVisitor;
 
-public class LambdaFieldVariableMetric implements Metric {
+public class MaxLambdaLinesMetric implements Metric {
     LambdaVisitor visitor;
 
-    public LambdaFieldVariableMetric(LambdaVisitor visitor){
+    public MaxLambdaLinesMetric(LambdaVisitor visitor){
         this.visitor = visitor;
     }
 
     @Override
     public Number getResult(CompilationUnit cu) {
-        return visitor.getLambdaCountFieldVariable();
+        return visitor.getMaxLambdaLines();
     }
 
     @Override
     public String getName() {
-        return "LambdaFieldVariable";
+        return "MaxLambdaLines";
     }
 }
-

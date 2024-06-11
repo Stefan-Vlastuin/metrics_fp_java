@@ -1,23 +1,24 @@
-package metrics.metrics.fp_existing;
+package metrics.metrics.lambdas;
 
 import com.github.javaparser.ast.CompilationUnit;
 import metrics.metrics.Metric;
 import metrics.visitors.LambdaVisitor;
 
-public class LambdaCountMetric implements Metric {
+public class LambdaLinesMetric implements Metric {
     LambdaVisitor visitor;
 
-    public LambdaCountMetric(LambdaVisitor visitor){
+    public LambdaLinesMetric(LambdaVisitor visitor){
         this.visitor = visitor;
     }
 
     @Override
     public Number getResult(CompilationUnit cu) {
-        return visitor.getLambdaCount();
+        return visitor.getLambdaLines();
     }
 
     @Override
     public String getName() {
-        return "LambdaCount";
+        return "LambdaLines";
     }
 }
+

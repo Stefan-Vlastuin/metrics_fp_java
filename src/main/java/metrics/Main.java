@@ -19,8 +19,16 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeS
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 
 import metrics.metrics.baseline.*;
-import metrics.metrics.fp_existing.*;
-import metrics.metrics.fp_new.*;
+import metrics.metrics.lambdas.*;
+import metrics.metrics.paradigm.ParadigmAlternativeMetric;
+import metrics.metrics.paradigm.ParadigmMetric;
+import metrics.metrics.pattern_matching.InstanceofMetric;
+import metrics.metrics.pattern_matching.PatternMatchingMetric;
+import metrics.metrics.referential_transparency.*;
+import metrics.metrics.streams.AverageStreamOperationsMetric;
+import metrics.metrics.streams.MaxStreamOperationsMetric;
+import metrics.metrics.streams.StreamsCountMetric;
+import metrics.metrics.streams.TotalStreamOperationsMetric;
 import metrics.visitors.*;
 import metrics.metrics.*;
 

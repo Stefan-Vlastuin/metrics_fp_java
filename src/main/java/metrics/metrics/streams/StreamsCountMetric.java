@@ -1,23 +1,23 @@
-package metrics.metrics.fp_new;
+package metrics.metrics.streams;
 
 import com.github.javaparser.ast.CompilationUnit;
 import metrics.metrics.Metric;
 import metrics.visitors.StreamVisitor;
 
-public class TotalStreamOperationsMetric implements Metric {
-    StreamVisitor streamVisitor;
+public class StreamsCountMetric implements Metric {
+    private final StreamVisitor streamVisitor;
 
-    public TotalStreamOperationsMetric(StreamVisitor streamVisitor){
+    public StreamsCountMetric(StreamVisitor streamVisitor){
         this.streamVisitor = streamVisitor;
     }
 
     @Override
     public Number getResult(CompilationUnit cu) {
-        return streamVisitor.getTotalStreamOperations();
+        return streamVisitor.getUnterminatedStreamsCount();
     }
 
     @Override
     public String getName() {
-        return "TotalStreamOperations";
+        return "StreamsCount";
     }
 }

@@ -1,4 +1,4 @@
-package metrics.metrics.fp_new;
+package metrics.metrics.streams;
 import com.github.javaparser.ast.CompilationUnit;
 import metrics.metrics.Metric;
 import metrics.visitors.StreamVisitor;

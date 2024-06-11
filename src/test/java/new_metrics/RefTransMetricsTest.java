@@ -3,7 +3,7 @@ package new_metrics;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import metrics.metrics.baseline.Setup;
-import metrics.metrics.fp_new.*;
+import metrics.metrics.referential_transparency.*;
 import metrics.visitors.MethodPurityVisitor;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

@@ -3,8 +3,8 @@ package new_metrics;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import metrics.metrics.baseline.Setup;
-import metrics.metrics.fp_new.InstanceofMetric;
-import metrics.metrics.fp_new.PatternMatchingMetric;
+import metrics.metrics.pattern_matching.InstanceofMetric;
+import metrics.metrics.pattern_matching.PatternMatchingMetric;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

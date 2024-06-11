@@ -1,4 +1,4 @@
-package metrics.metrics.fp_new;
+package metrics.metrics.pattern_matching;
 
 import com.github.javaparser.ast.CompilationUnit;
 import metrics.metrics.Metric;

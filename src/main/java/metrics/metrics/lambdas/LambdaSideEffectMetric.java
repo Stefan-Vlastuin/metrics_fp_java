@@ -1,23 +1,24 @@
-package metrics.metrics.fp_new;
+package metrics.metrics.lambdas;
 
 import com.github.javaparser.ast.CompilationUnit;
 import metrics.metrics.Metric;
 import metrics.visitors.LambdaVisitor;
 
-public class AverageLambdaLinesMetric implements Metric {
+public class LambdaSideEffectMetric implements Metric {
     LambdaVisitor visitor;
 
-    public AverageLambdaLinesMetric(LambdaVisitor visitor){
+    public LambdaSideEffectMetric(LambdaVisitor visitor){
         this.visitor = visitor;
     }
 
     @Override
     public Number getResult(CompilationUnit cu) {
-        return visitor.getAverageLambdaLines();
+        return visitor.getLambdaCountSideEffect();
     }
 
     @Override
     public String getName() {
-        return "AverageLambdaLines";
+        return "LambdaSideEffect";
     }
 }
+
