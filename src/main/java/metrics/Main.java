@@ -22,6 +22,7 @@ import metrics.metrics.baseline.*;
 import metrics.metrics.lambdas.*;
 import metrics.metrics.paradigm.ParadigmAlternativeMetric;
 import metrics.metrics.paradigm.ParadigmMetric;
+import metrics.metrics.paradigm.UsesFP;
 import metrics.metrics.pattern_matching.InstanceofMetric;
 import metrics.metrics.pattern_matching.PatternMatchingMetric;
 import metrics.metrics.referential_transparency.*;
@@ -151,7 +152,8 @@ public class Main {
                 new MethodRatioFieldVariableMetric(methodPurityVisitor),
                 new MethodRatioImpureMetric(methodPurityVisitor),
                 new FieldVariableNonFinalMetric(),
-                new FieldVariableRatioNonFinalMetric()
+                new FieldVariableRatioNonFinalMetric(),
+                new UsesFP()
         );
     }
 
