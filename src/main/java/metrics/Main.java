@@ -63,6 +63,7 @@ public class Main {
         ResultWriter resultWriter = null;
         try {
             List<CompilationUnit> compilationUnits = getCompilationUnits(new File(path));
+            compilationUnits = removeFiles(compilationUnits, filesToIgnore);
             LambdaVisitor lambdaVisitor = new LambdaVisitor();
             StreamVisitor streamVisitor = new StreamVisitor();
             MethodPurityVisitor methodPurityVisitor = new MethodPurityVisitor();
@@ -72,18 +73,15 @@ public class Main {
             resultWriter = new ResultWriter(RESULT_PATH, names);
 
             for (CompilationUnit cu : compilationUnits){
-                String filename = cu.getStorage().orElseThrow().getFileName();
-                if(!filesToIgnore.contains(filename)){
-                    logger.log("Working on file " + cu.getStorage().orElseThrow().getFileName());
-                    lambdaVisitor = new LambdaVisitor();
-                    lambdaVisitor.visit(cu, null); // We do this here, so that it is done only once for all lambda metrics.
-                    streamVisitor = new StreamVisitor();
-                    streamVisitor.visit(cu, null);
-                    methodPurityVisitor = new MethodPurityVisitor();
-                    methodPurityVisitor.visit(cu, null);
-                    ResultCompilationUnit result = getResults(cu, getMetrics(compilationUnits, lambdaVisitor, streamVisitor, methodPurityVisitor), Paths.get(basePath));
-                    resultWriter.writeResult(result);
-                }
+                logger.log("Working on file " + cu.getStorage().orElseThrow().getFileName());
+                lambdaVisitor = new LambdaVisitor();
+                lambdaVisitor.visit(cu, null); // We do this here, so that it is done only once for all lambda metrics.
+                streamVisitor = new StreamVisitor();
+                streamVisitor.visit(cu, null);
+                methodPurityVisitor = new MethodPurityVisitor();
+                methodPurityVisitor.visit(cu, null);
+                ResultCompilationUnit result = getResults(cu, getMetrics(compilationUnits, lambdaVisitor, streamVisitor, methodPurityVisitor), Paths.get(basePath));
+                resultWriter.writeResult(result);
             }
         } catch (IOException e){
             logger.log(e);
@@ -152,6 +150,10 @@ public class Main {
         List<Number> numbers = metrics.stream().map(m -> m.getResult(cu)).toList();
         Path relativePath = basePath.relativize(cu.getStorage().orElseThrow().getPath());
         return new ResultCompilationUnit(relativePath.toString(), numbers);
+    }
+
+    private static List<CompilationUnit> removeFiles(List<CompilationUnit> units, List<String> toIgnore){
+        return units.stream().filter(cu -> !toIgnore.contains(cu.getStorage().orElseThrow().getFileName())).toList();
     }
 
 }
