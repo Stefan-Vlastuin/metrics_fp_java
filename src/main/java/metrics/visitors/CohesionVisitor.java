@@ -9,6 +9,8 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 public class CohesionVisitor extends VoidVisitorAdapter<Void> {
 
+    // TODO: currently, when field variables are declared together (int x, y, z;), they are seen as the same
+
     private int nrRelatedMethodPairs = 0;
     private int nrUnrelatedMethodPairs = 0;
 

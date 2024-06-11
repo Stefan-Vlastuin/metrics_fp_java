@@ -23,7 +23,7 @@ public class DepthVisitor extends VoidVisitorAdapter<Void> {
         Optional<Integer> depth = ancestors.stream()
                 .map(a -> computeDepth(a.getTypeDeclaration().orElseThrow()))
                 .max(Integer::compareTo);
-        return depth.map(d -> d + 1).orElse(1);
+        return depth.map(d -> d + 1).orElse(0);
     }
 
     public int getDepth() {
