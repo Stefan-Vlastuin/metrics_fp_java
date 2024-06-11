@@ -120,7 +120,7 @@ public class Main {
                 new ChildrenMetric(compilationUnits),
                 new ResponseMetric(),
                 new CohesionMetric(),
-                new CouplingMetric(),
+                new CouplingMetric(compilationUnits),
                 new LambdaCountMetric(lambdaVisitor),
                 new LambdaLinesMetric(lambdaVisitor),
                 new AverageLambdaLinesMetric(lambdaVisitor),

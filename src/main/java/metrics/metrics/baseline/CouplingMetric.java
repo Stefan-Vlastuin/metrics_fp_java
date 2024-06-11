@@ -1,16 +1,21 @@
 package metrics.metrics.baseline;
 
 import com.github.javaparser.ast.CompilationUnit;
+import metrics.calculators.CouplingCalculator;
 import metrics.metrics.Metric;
-import metrics.visitors.CouplingVisitor;
+
+import java.util.List;
 
 public class CouplingMetric implements Metric {
+    private final List<CompilationUnit> allUnits;
+
+    public CouplingMetric(List<CompilationUnit> allUnits){
+        this.allUnits = allUnits;
+    }
 
     @Override
     public Number getResult(CompilationUnit cu) {
-        CouplingVisitor couplingVisitor = new CouplingVisitor(cu);
-        couplingVisitor.visit(cu, null);
-        return couplingVisitor.getCoupling();
+        return CouplingCalculator.getInstance(allUnits).getCoupling(cu);
     }
 
     @Override
