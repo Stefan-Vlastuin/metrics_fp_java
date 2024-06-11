@@ -37,32 +37,33 @@ public class Main {
     private final static ProgressLogger logger = ProgressLogger.getInstance();
     
     public static void main(String[] args) {
-        String path = "";
+        List<String> srcPaths = new ArrayList<>();
         String basePath = "";
         List<String> filesToIgnore = new ArrayList<>();
         if (args.length == 2) {
-            path = args[0];
+            srcPaths = Arrays.asList(args[0].split(","));
             basePath = args[1];
         } else if (args.length == 3){
-            path = args[0];
+            srcPaths = Arrays.asList(args[0].split(","));
             basePath = args[1];
-            String ignore = args[2];
-            filesToIgnore = Arrays.asList(ignore.split(","));
+            filesToIgnore = Arrays.asList(args[2].split(","));
         } else {
-            System.err.println("Usage: java Main <path> <basePath> <ignore>");
+            System.err.println("Usage: java Main <srcPaths> <basePath> <ignore>");
             System.exit(1);
         }
 
         CombinedTypeSolver typeSolver = new CombinedTypeSolver();
         ParserConfiguration parserConfiguration = new ParserConfiguration()
                 .setSymbolResolver(new JavaSymbolSolver(typeSolver)).setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_18);
-        typeSolver.add(new JavaParserTypeSolver(new File(path), parserConfiguration));
+        for (String srcPath : srcPaths){
+            typeSolver.add(new JavaParserTypeSolver(new File(srcPath), parserConfiguration));
+        }
         typeSolver.add(new ReflectionTypeSolver(false));
         StaticJavaParser.setConfiguration(parserConfiguration);
 
         ResultWriter resultWriter = null;
         try {
-            List<CompilationUnit> compilationUnits = getCompilationUnits(new File(path));
+            List<CompilationUnit> compilationUnits = getCompilationUnits(srcPaths);
             compilationUnits = removeFiles(compilationUnits, filesToIgnore);
             LambdaVisitor lambdaVisitor = new LambdaVisitor();
             StreamVisitor streamVisitor = new StreamVisitor();
@@ -91,6 +92,14 @@ public class Main {
             }
             logger.close();
         }
+    }
+
+    private static List<CompilationUnit> getCompilationUnits(List<String> srcPaths) throws FileNotFoundException {
+        List<CompilationUnit> result = new ArrayList<>();
+        for (String srcPath : srcPaths){
+            result.addAll(getCompilationUnits(new File(srcPath)));
+        }
+        return result;
     }
 
     public static List<CompilationUnit> getCompilationUnits(File path) throws FileNotFoundException{
