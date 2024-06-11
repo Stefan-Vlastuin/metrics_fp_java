@@ -63,6 +63,7 @@ public class Main {
         StaticJavaParser.setConfiguration(parserConfiguration);
 
         ResultWriter resultWriter = null;
+        int totalLOC = 0;
         try {
             List<CompilationUnit> compilationUnits = getCompilationUnits(srcPaths);
             compilationUnits = removeFiles(compilationUnits, filesToIgnore);
@@ -83,6 +84,7 @@ public class Main {
                 methodPurityVisitor = new MethodPurityVisitor();
                 methodPurityVisitor.visit(cu, null);
                 ResultCompilationUnit result = getResults(cu, getMetrics(compilationUnits, lambdaVisitor, streamVisitor, methodPurityVisitor), Paths.get(basePath));
+                totalLOC += (int) result.numbers().get(0); // We assume the first number is the LOC
                 resultWriter.writeResult(result);
             }
         } catch (IOException e){
@@ -92,6 +94,7 @@ public class Main {
                 resultWriter.close();
             }
             logger.close();
+            System.out.println("Total LOC: " + totalLOC);
         }
     }
 
@@ -120,7 +123,7 @@ public class Main {
 
     private static List<Metric> getMetrics(List<CompilationUnit> compilationUnits, LambdaVisitor lambdaVisitor, StreamVisitor streamVisitor, MethodPurityVisitor methodPurityVisitor){
         return List.of(
-                new LinesOfCodeMetric(),
+                new LinesOfCodeMetric(), // Needs to be the first (for the computation of total LOC of the project)!
                 new ComplexityMetric(),
                 new DepthMetric(),
                 new ChildrenMetric(compilationUnits),
