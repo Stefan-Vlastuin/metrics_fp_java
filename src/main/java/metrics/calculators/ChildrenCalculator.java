@@ -4,6 +4,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
+import metrics.ProgressLogger;
 
 import java.util.*;
 
@@ -59,12 +60,17 @@ public class ChildrenCalculator {
 
 class AncestorVisitor extends VoidVisitorAdapter<Void> {
     private final List<ResolvedReferenceTypeDeclaration> ancestors = new ArrayList<>();
+    private final ProgressLogger logger = ProgressLogger.getInstance();
 
     @Override
     public void visit(ClassOrInterfaceDeclaration classOrInterface, Void arg) {
         super.visit(classOrInterface, arg);
-        ancestors.addAll(classOrInterface.resolve().getAncestors(true).
-                stream().map(a -> a.getTypeDeclaration().orElseThrow()).toList());
+        try {
+            ancestors.addAll(classOrInterface.resolve().getAncestors(true).
+                    stream().map(a -> a.getTypeDeclaration().orElseThrow()).toList());
+        } catch (Exception e) {
+            logger.log(e, "Could not resolve ancestors of " + classOrInterface.getNameAsString() + " at " + classOrInterface.getRange());
+        }
     }
 
     public List<ResolvedReferenceTypeDeclaration> getAncestors() {

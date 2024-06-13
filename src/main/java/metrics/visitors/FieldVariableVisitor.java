@@ -28,7 +28,7 @@ public class FieldVariableVisitor extends VoidVisitorAdapter<Void> {
             if (declNode.isPresent() && declNode.get() instanceof FieldDeclaration fieldDeclaration){
                 fieldVariables.add(fieldDeclaration);
             }
-        } catch (UnsolvedSymbolException e){
+        } catch (Exception e){
             logger.log(e, "Could not resolve variable " + nameExpr.getNameAsString() + " at " + nameExpr.getRange());
         }
 
