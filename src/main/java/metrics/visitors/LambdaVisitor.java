@@ -13,6 +13,7 @@ public class LambdaVisitor extends VoidVisitorAdapter<Void> {
     private int sideEffectCount = 0;
     private final List<Integer> lambdaLengths = new ArrayList<>();
     private int lambdaComplexity = 0;
+    private int complexLambdaCount = 0;
 
     @Override
     public void visit(LambdaExpr lambda, Void arg) {
@@ -34,6 +35,10 @@ public class LambdaVisitor extends VoidVisitorAdapter<Void> {
         ComplexityVisitor complexityVisitor = new ComplexityVisitor();
         complexityVisitor.visit(lambda, null);
         lambdaComplexity += complexityVisitor.getComplexity();
+
+        if (complexityVisitor.getComplexity() > 1){
+            complexLambdaCount++;
+        }
     }
 
     private boolean usesFieldVariable(LambdaExpr l){
@@ -77,6 +82,10 @@ public class LambdaVisitor extends VoidVisitorAdapter<Void> {
 
     public int getLambdaComplexity(){
         return lambdaComplexity;
+    }
+
+    public int getComplexLambdaCount(){
+        return complexLambdaCount;
     }
 
 }

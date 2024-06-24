@@ -156,6 +156,7 @@ public class Main {
                 new MethodRatioImpureMetric(methodPurityVisitor),
                 new FieldVariableNonFinalMetric(),
                 new FieldVariableRatioNonFinalMetric(),
+                new ComplexLambdaMetric(lambdaVisitor),
                 new UsesFP()
         );
     }
